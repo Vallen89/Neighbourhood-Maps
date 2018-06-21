@@ -1,8 +1,25 @@
 import React, { Component } from 'react';
+import Listings from './Listings.js'
 import './App.css';
-import Map from './Map.js'
 
 class App extends Component {
+
+constructor(props) {
+  super(props);
+  this.state = {
+    locations: [
+      {name: 'Stadtbibliothek Stuttgart', type: "Bibliothek", lat: 48.790024, lng: 9.182994},
+      {name: 'Porsche Arena', type: "Stadium", lat: 48.793226, lng: 9.228262},
+      {name: 'Castle Solitude', type: "Castle", lat: 48.790240, lng: 9.084604},
+      {name: 'Fernsehturm Stuttgart', type: "Attraction", lat: 48.758434, lng: 9.190020},
+      {name: 'Ludwigsburg Palace', type: "Attraction", lat: 48.899407, lng: 9.196029},
+    ],
+    markers: '',
+    map: '',
+    }
+    this.initMap = this.initMap.bind(this);
+    this.populateInfoWindow = this.populateInfoWindow.bind(this);
+  }
 
   componentDidMount() {
     window.initMap = this.initMap;
@@ -18,32 +35,93 @@ class App extends Component {
   }
 
 initMap() {
+  var self = this;
     let map;
     map = new window.google.maps.Map(document.getElementById('map'), {
-      center: {lat: 48.776247, lng: 9.188887},
-      zoom: 12
+      center: {lat: 48.826206, lng: 9.183652},
+      mapTypeControl: false,
+      zoom: 11
     });
 
-    let Stuggi = {lat: 48.776247, lng: 9.188887}
-    var marker = new window.google.maps.Marker({
-      position: Stuggi,
-      map: map,
-      title: 'Stuggi Try'
+    var largeInfowindow = new window.google.maps.InfoWindow({});
+
+    window.google.maps.event.addListener(largeInfowindow, "closeclick", function() {
+      self.closeWindow(largeInfowindow);
     });
-    var infoWindow = new window.google.maps.InfoWindow({
-      content: 'Do whatever you want'
+
+    var locations = [];
+      this.state.locations.forEach(function(location) {
+      var id = location.name;
+      var marker = new window.google.maps.Marker({
+        position: new window.google.maps.LatLng(location.lat, location.lng),
+        latitude: location.lat,
+        longitude: location.lng,
+        map: map,
+        title: location.name,
+      })
+      location.id = id;
+      location.marker = marker;
+      locations.push(location);
+
+      marker.addListener('click', function() {
+        self.populateInfoWindow(this, largeInfowindow);
+      });
+
     });
-    marker.addListener('click', function() {
-      infoWindow.open(map, marker);
+    this.setState({
+      locations: locations
     });
+
   }
+  72057594040753233
+
+populateInfoWindow(marker, infowindow) {
+    if (infowindow.marker !== marker) {
+      infowindow.marker = marker;
+      infowindow.setContent('<div><strong>Loading...</strong></div>');
+      infowindow.open(this.state.map, marker);
+      this.foursquareApi(marker, infowindow);
+    }
+    else {
+      infowindow.marker = "";
+      infowindow.close()
+    }
+  }
+
+  foursquareApi(marker, infowindow) {
+    var clientId = "QP1H1XSEX5VXHW5JOTJQT3AYE0JGZQWJPASSBYV0LATTMM3N";
+    var clientSecret = "A3JEWLVCSM54R1EA5J1QKFUIGY3NGDSYEF4Y1KBLMAX1AYWE";
+
+    var url =
+    'https://api.foursquare.com/v2/venues/search?client_id=' +
+    clientId + '&client_secret=' + clientSecret + '&v=20180323&ll=' + marker.latitude + ',' + marker.longitude + '&limit=1'
+    console.log(url);
+
+    fetch(url).then(function(response) {
+      response.json().then(function(data) {
+        let infos = data.response.venues[0];
+        console.log(infos)
+        infowindow.setContent(
+          '<div><h2>'+infos.name+'</h2>'+
+          '<p>'+ infos.location.formattedAddress[0] + '</br>' + infos.location.formattedAddress[1] + '</br>' + infos.location.formattedAddress[2] + '</p>'
+
+          +'</div>' )
+      })
+    }).catch(function(error) {
+      infowindow.setContent("Infos could not be loaded")
+    })
+  }
+
+closeWindow(infowindow) {
+  infowindow.marker = "";
+}
 
   render() {
     return (
       <div className="App">
           <div className="list-box">
             <h1>Stuttgart Locations</h1>
-            <input type="text" />
+            <Listings locations={this.state.locations} />
           </div>
           <div id="map"></div>
       </div>
