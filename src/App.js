@@ -68,7 +68,6 @@ initMap() {
       location.id = id;
       location.marker = marker;
       locations.push(location);
-
       marker.addListener('click', function() {
         self.populateInfoWindow(marker);
       });
@@ -78,8 +77,11 @@ initMap() {
     })
   }
 
+
+
 populateInfoWindow(marker) {
     let infowindow = this.state.InfoWindow;
+  marker.setAnimation(window.google.maps.Animation.BOUNCE);
     if (infowindow.marker !== marker) {
       infowindow.marker = marker;
       infowindow.setContent('<div><strong>Loading...</strong></div>');
@@ -89,6 +91,7 @@ populateInfoWindow(marker) {
     else {
       infowindow.marker = "";
       infowindow.close()
+        marker.setAnimation(null);
     }
   }
 
@@ -114,7 +117,7 @@ populateInfoWindow(marker) {
           +'</div>' )
       })
     }).catch(function(error) {
-      infowindow.setContent("Infos could not be loaded")
+      infowindow.setContent("Infos could not be loaded, please try again later")
     })
   }
 

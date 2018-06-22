@@ -48,7 +48,7 @@ showListing.sort(sortBy('name'))
       />
       <ul role="listbox" aria-label="List with locations">
       {showListing.map((place) => (
-        <li role="button" aria-label="Location Listitems" tabindex="0" className="LocationItems" key={place.name} onClick={this.props.populateInfoWindow.bind(this, place.marker)}>
+        <li role="button" aria-label="Location Listitems" tabIndex="0" className="LocationItems" key={place.name} onClick={this.props.populateInfoWindow.bind(this, place.marker)}>
         {place.name}
         </li>
       ))}
