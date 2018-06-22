@@ -12,7 +12,7 @@ state = {
 updateQuery = (query) => {
   this.setState({query: query.trim() })
   var locations = [];
-  this.props.locations.filter(function(location) {
+  this.props.locations.forEach(function(location) {
     if (location.id.toLowerCase().indexOf(query.toLowerCase()) >= 0) {
       location.marker.setVisible(true);
       locations.push(location);
@@ -21,7 +21,6 @@ updateQuery = (query) => {
     }
   })
 }
-
 
   render() {
     const { query } = this.state
@@ -38,16 +37,18 @@ updateQuery = (query) => {
 showListing.sort(sortBy('name'))
 
     return (
-      <div>
+      <div id="list-box">
       <input
+      role="search"
+      id="Search"
       type="text"
       placeholder="Search for a Location"
       value={query}
       onChange={(event) => this.updateQuery(event.target.value)}
       />
-      <ul>
+      <ul role="listbox" aria-label="List with locations">
       {showListing.map((place) => (
-        <li key={place.name}>
+        <li role="button" aria-label="Location Listitems" tabindex="0" className="LocationItems" key={place.name} onClick={this.props.populateInfoWindow.bind(this, place.marker)}>
         {place.name}
         </li>
       ))}

@@ -1,16 +1,131 @@
 .App {
-  text-align: center;
+
 }
 
-.list-box {
-  max-width: 25%;
-  height: 100%;
+.wrapper {
+  min-width: 25%;
+  min-height: 100%;
   position: absolute;
+}
+
+#list-box {
+  text-align: center;
+padding-top: 20px
 }
 
 #map {
-  height: 100%;
+  min-height: 100%;
   min-width: 75%;
   position: absolute;
   right: 0;
+}
+
+#Search {
+  width: 300px;
+  padding: 5px;
+border: 1px solid black;
+}
+
+ul {
+  padding: 0;
+}
+
+.LocationItems {
+  min-width: 100%;
+  list-style-type: none;
+  padding: 10px;
+  font-weight: bold;
+}
+#Side-Heading {
+  font-size: 36px;
+  text-align: center;
+}
+
+#infobox {
+  text-align: center;
+  margin: 5px;
+}
+
+@media only screen and (min-width: 1280px) and (max-width: 1500px) {
+  #map {
+    min-width: 70%;
+  }
+  .wrapper {
+    min-width: 30%;
+  }
+}
+
+@media only screen and (min-width: 1080px) and (max-width: 1279px) {
+  #map {
+    min-width: 65%;
+  }
+  .wrapper {
+    min-width: 35%;
+  }
+}
+
+@media only screen and (min-width: 880px) and (max-width: 1079px) {
+  #map {
+    min-width: 60%;
+  }
+  .wrapper {
+    min-width: 40%;
+  }
+
+  #Side-Heading {
+    font-size: 32px;
+    text-align: center;
+  }
+}
+
+@media only screen and (min-width: 680px) and (max-width: 879px) {
+  #map {
+    min-width: 55%;
+  }
+  .wrapper {
+    min-width: 45%;
+  }
+
+  #Side-Heading {
+    font-size: 28px;
+    text-align: center;
+  }
+
+  #Search {
+    width: 250px;
+  }
+}
+
+@media only screen and (max-width: 679px) {
+  .wrapper {
+    min-width: 100%;
+    min-height: 25%;
+    position: relative;
+  }
+
+  #map {
+    min-height: 75%;
+    min-width: 100%;
+    position: absolute;
+    right: 0;
+  }
+
+  #Side-Heading {
+    font-size: 22px;
+    text-align: center;
+  }
+
+  #Search {
+    width: 150px;
+  }
+
+  .LocationItems {
+    min-width: 60%;
+    list-style-type: none;
+    padding: 2px;
+  }
+  #list-box {
+  padding-top: 0;
+  min-height: 154px;
+  }
 }

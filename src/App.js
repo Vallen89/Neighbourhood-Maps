@@ -14,8 +14,8 @@ constructor(props) {
       {name: 'Fernsehturm Stuttgart', type: "Attraction", lat: 48.758434, lng: 9.190020},
       {name: 'Ludwigsburg Palace', type: "Attraction", lat: 48.899407, lng: 9.196029},
     ],
-    markers: '',
     map: '',
+    InfoWindow: ''
     }
     this.initMap = this.initMap.bind(this);
     this.populateInfoWindow = this.populateInfoWindow.bind(this);
@@ -43,10 +43,16 @@ initMap() {
       zoom: 11
     });
 
+
     var largeInfowindow = new window.google.maps.InfoWindow({});
 
     window.google.maps.event.addListener(largeInfowindow, "closeclick", function() {
       self.closeWindow(largeInfowindow);
+    });
+
+    this.setState({
+      map: map,
+      InfoWindow: largeInfowindow
     });
 
     var locations = [];
@@ -64,18 +70,16 @@ initMap() {
       locations.push(location);
 
       marker.addListener('click', function() {
-        self.populateInfoWindow(this, largeInfowindow);
+        self.populateInfoWindow(marker);
       });
-
     });
     this.setState({
       locations: locations
-    });
-
+    })
   }
-  72057594040753233
 
-populateInfoWindow(marker, infowindow) {
+populateInfoWindow(marker) {
+    let infowindow = this.state.InfoWindow;
     if (infowindow.marker !== marker) {
       infowindow.marker = marker;
       infowindow.setContent('<div><strong>Loading...</strong></div>');
@@ -88,6 +92,10 @@ populateInfoWindow(marker, infowindow) {
     }
   }
 
+  closeWindow(infowindow) {
+    infowindow.marker = "";
+  }
+
   foursquareApi(marker, infowindow) {
     var clientId = "QP1H1XSEX5VXHW5JOTJQT3AYE0JGZQWJPASSBYV0LATTMM3N";
     var clientSecret = "A3JEWLVCSM54R1EA5J1QKFUIGY3NGDSYEF4Y1KBLMAX1AYWE";
@@ -95,14 +103,12 @@ populateInfoWindow(marker, infowindow) {
     var url =
     'https://api.foursquare.com/v2/venues/search?client_id=' +
     clientId + '&client_secret=' + clientSecret + '&v=20180323&ll=' + marker.latitude + ',' + marker.longitude + '&limit=1'
-    console.log(url);
 
     fetch(url).then(function(response) {
       response.json().then(function(data) {
         let infos = data.response.venues[0];
-        console.log(infos)
         infowindow.setContent(
-          '<div><h2>'+infos.name+'</h2>'+
+          '<div id="infobox"><h2>'+infos.name+'</h2>'+
           '<p>'+ infos.location.formattedAddress[0] + '</br>' + infos.location.formattedAddress[1] + '</br>' + infos.location.formattedAddress[2] + '</p>'
 
           +'</div>' )
@@ -112,18 +118,14 @@ populateInfoWindow(marker, infowindow) {
     })
   }
 
-closeWindow(infowindow) {
-  infowindow.marker = "";
-}
-
   render() {
     return (
       <div className="App">
-          <div className="list-box">
-            <h1>Stuttgart Locations</h1>
-            <Listings locations={this.state.locations} />
+          <div className="wrapper">
+            <h1 id="Side-Heading">Stuttgart Locations</h1>
+            <Listings locations={this.state.locations} populateInfoWindow={this.populateInfoWindow}/>
           </div>
-          <div id="map"></div>
+          <div id="map" role="application" aria-label="Map with locations"></div>
       </div>
     );
   }
